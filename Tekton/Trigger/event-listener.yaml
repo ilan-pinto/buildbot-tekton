@@ -1,0 +1,24 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: builder-bot-listener-interceptor
+  annotations:
+    tekton.dev/payload-validation: "false"
+spec:
+  serviceAccountName: sample-app-sa
+  triggers:    
+    - name: slack-bot-build-trigger
+      interceptors:
+        - ref: 
+            name: slack-interceptor
+            kind: NamespaceInterceptor            
+
+      bindings:
+        - name: branch
+          value: $(extensions.branch)
+        - name: image
+          value: $(extensions.image)
+   
+ 
+      template:
+         ref: build-pipeline-template

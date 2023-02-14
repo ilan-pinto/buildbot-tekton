@@ -1,0 +1,70 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: build-pipeline
+  namespace: sample-app
+spec:
+      workspaces:     
+        - name: shared-workspace     
+
+      params:
+      - name: branch-name
+        type: string
+        description: The git branch to clone.
+      - name: image-tag
+        type: string
+        description: repo image tag   
+
+      tasks:
+      - name: clone
+        taskRef:
+          name: git-clone
+        workspaces:
+            - name: output
+              workspace: shared-workspace 
+        params:
+          - name: url
+            value: https://github.com/ilan-pinto/buildbot-tekton.git
+          - name: revision 
+            value: "$(params.branch-name)"  
+          - name: subdirectory
+            value: "sample-app"
+          - name: deleteExisting
+            value: "true"
+          - name: sslVerify
+            value: "false"
+ 
+
+      - name: build
+        taskRef:
+          name: s2i
+        runAfter:
+          - clone
+        workspaces:
+          - name: source
+            workspace: shared-workspace
+        params:
+          - name: BUILDER_IMAGE
+            value: quay.io/centos7/python-38-centos7
+          - name: TLSVERIFY
+            value: "false"
+          - name: LOGLEVEL
+            value: "10"
+          - name: IMAGE
+            value: quay.io/ilan_pinto/sample-app:"$(params.image-tag)"
+
+      finally: 
+      - name: slack-final-notification
+        taskRef:
+         name: send-to-webhook-slack
+        when: 
+        - input: "$(tasks.status)"
+          operator: in
+          values: ["Completed","Failed","Succeeded"]   
+        params:
+          - name: webhook-secret
+            value: slack-webhook-secret
+          - name: message
+            value: "build bot pipeline *$(tasks.status)* for branch: $(params.branch-name)" 
+        
+  

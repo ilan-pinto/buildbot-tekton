@@ -1,0 +1,32 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: build-pipeline-template
+spec:
+  params:
+  - name: branch 
+  - name: image    
+
+  resourcetemplates:
+  - apiVersion: tekton.dev/v1beta1
+    kind: PipelineRun
+    metadata:
+      generateName: build-pipeline-from-slack-
+      namespace: sample-app
+      labels:
+        tekton.dev/pipeline: build-pipeline 
+    spec:     
+        params:
+        - name: branch-name
+          value: $(tt.params.branch)
+        - name: image-tag
+          value: $(tt.params.image)      
+
+        pipelineRef:
+          name: build-pipeline
+        serviceAccountName: sample-app-sa 
+        workspaces:
+          - name: shared-workspace
+            persistentVolumeClaim:
+              claimName: sample-app-pvc
+              

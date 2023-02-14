@@ -1,0 +1,21 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: sample-app-build-
+  namespace: sample-app
+spec:
+  serviceAccountName: sample-app-sa  
+  pipelineRef:
+    name: build-pipeline
+
+  params:
+    - name: branch-name
+      value: "main"  
+    - name: image-tag
+      value: "v1"   
+      
+  workspaces:
+    - name: shared-workspace
+      persistentVolumeClaim:
+        claimName: sample-app-pvc
+        
