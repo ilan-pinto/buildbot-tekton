@@ -1,7 +1,9 @@
 apiVersion: triggers.tekton.dev/v1alpha1
-kind: ClusterInterceptor
+kind: Interceptor
 metadata:
   name: slack-interceptor
+  labels:
+    server/type: http
 spec:
     clientConfig:
       service:

@@ -11,7 +11,10 @@ spec:
       interceptors:
         - ref: 
             name: slack-interceptor
-            kind: NamespaceInterceptor            
+            kind: Interceptor
+          params:
+            - name: branch 
+              value: test-branch
 
       bindings:
         - name: branch
