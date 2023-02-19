@@ -16,7 +16,7 @@ spec:
       serviceAccountName: sample-app-sa
       containers:
         - name: slack-webhook-interceptor
-          image: quay.io/ilan_pinto/slack-webhook:v7
+          image: quay.io/ilan_pinto/slack-webhook:v21
 ---
 apiVersion: v1
 kind: Service
