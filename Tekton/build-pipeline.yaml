@@ -5,16 +5,16 @@ metadata:
   namespace: sample-app
 spec:
       workspaces:     
-        - name: shared-workspace     
-
+        - name: shared-workspace
+      # pipeline params   
       params:
       - name: branch-name
         type: string
         description: The git branch to clone.
       - name: image-tag
         type: string
-        description: repo image tag   
-
+        description: repo image tag  
+      #list of tasks   
       tasks:
       - name: clone
         taskRef:
@@ -33,8 +33,6 @@ spec:
             value: "true"
           - name: sslVerify
             value: "false"
- 
-
       - name: build
         taskRef:
           name: s2i
@@ -51,12 +49,12 @@ spec:
           - name: LOGLEVEL
             value: "10"
           - name: IMAGE
-            value: quay.io/ilan_pinto/sample-app:"$(params.image-tag)"
-
+            value: [ADD YOUR REPO NAME HERE]/sample-app:"$(params.image-tag)" #change to your image registry
+      # in any case run this 
       finally: 
       - name: slack-final-notification
         taskRef:
-         name: send-to-webhook-slack
+          name: send-to-webhook-slack
         when: 
         - input: "$(tasks.status)"
           operator: in
@@ -66,5 +64,3 @@ spec:
             value: slack-webhook-secret
           - name: message
             value: "build bot pipeline *$(tasks.status)* for branch: $(params.branch-name)" 
-        
-  
