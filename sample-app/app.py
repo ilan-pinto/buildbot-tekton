@@ -1,4 +1,4 @@
 import time
 
-print("sample app v1")
+print("sample app v2")
 time.sleep(50)

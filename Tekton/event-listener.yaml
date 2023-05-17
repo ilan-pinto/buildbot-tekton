@@ -31,7 +31,7 @@ spec:
               claimName: sample-app-pvc
 
 ---
-apiVersion: triggers.tekton.dev/v1alpha1
+apiVersion: triggers.tekton.dev/v1beta1
 kind: EventListener
 metadata:
   name: builder-bot-listener-interceptor
